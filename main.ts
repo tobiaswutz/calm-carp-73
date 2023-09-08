@@ -1,7 +1,8 @@
+// deno run --unstable -A --watch  main.ts
 import { Application, Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 import { User } from "./types.ts";
-import { load } from "https://deno.land/std/dotenv/mod.ts";
+import { load } from "https://deno.land/std@0.201.0/dotenv/mod.ts";
 
 
 const env = await load();
@@ -15,7 +16,8 @@ router
   .post("/create", async (context) => {
     const body = context.request.body();
     const user: User = await body.value;
-    user.id = crypto.randomUUID();
+    // user.id = crypto.randomUUID();
+    user.id = user.name.toLowerCase().replace(' ', '');
     await db.set(['users', user.id], user);
     context.response.body = `User ${user.name} created with id ${user.id}`;
   })
