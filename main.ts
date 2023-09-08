@@ -16,12 +16,18 @@ router
     const body = context.request.body();
     const user: User = await body.value;
     user.id = crypto.randomUUID();
-    const usersFromDB: User[] | null = (await db.get<User[]>(['users'])).value;
-    if (!usersFromDB) { await db.set(['users'], [user]); } else { await db.set(['users'], [...usersFromDB, user]); }
-    context.response.body = await db.get(['users']);
+    await db.set(['users', user.id], user);
+    context.response.body = `User ${user.name} created with id ${user.id}`;
   })
-  .get("/read", async (context) => {
-    context.response.body = new TextEncoder().encode(JSON.stringify(await db.get(['users'])));
+  .get("/:id", async (context) => {
+    const userId = context.params.id;
+    const hello: User | unknown = (await db.get(['users', userId])).value;
+
+    if (hello) {
+      context.response.body = hello;
+    } else {
+      context.response.body = 'User not found!';
+    }
   })
 
 
