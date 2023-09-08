@@ -1,7 +1,14 @@
 import { Application, Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 import { User } from "./types.ts";
-const db = await Deno.openKv("./db/database.ts");
+import { load } from "https://deno.land/std/dotenv/mod.ts";
+
+
+const env = await load();
+
+Deno.env.set("DENO_KV_ACCESS_TOKEN", env['DENO_KV_ACCESS_TOKEN']);
+
+const db = await Deno.openKv("https://api.deno.com/databases/db399a2a-abf6-439d-beb5-1ba7a6ea32ab/connect");
 
 const router = new Router();
 router
